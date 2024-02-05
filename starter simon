@@ -1,0 +1,105 @@
+import pygame
+import random
+import math
+import winsound
+pygame.init()
+pygame.display.set_caption("Simon says clap")
+screen = pygame.display.set_mode((800, 800))
+
+#deff
+def collision(xpos,ypos):
+    print("inside collision function, parameters are ", xpos, ypos)
+    if math.sqrt((xpos - 400)**2 + (ypos - 400)**2)>200:
+        print("outside of the ring")
+        return -1
+    elif xpos < 400 and ypos < 400:
+        print("over green button")
+        return 0
+    elif xpos < 400 and ypos > 400:
+        print("over yellow button")
+        return 1
+    elif xpos > 400 and ypos < 400:
+        print("over blue button")
+        return 2
+    elif xpos > 400 and ypos > 400:
+        print("over red button")
+        return 3
+
+#variables
+xpos = 0
+ypos = 0
+mousePos = (xpos, ypos)
+hasClicked = False
+pattern = []
+payerPattern = []
+playerTurn = True
+pi = 3.1415
+ded = False
+name = "SIMON"
+click = 0
+
+         
+#game loop
+while True:
+    event = pygame.event.wait()
+    
+    collision(mousePos[0],xpos)
+    collision(mousePos[1],ypos)
+    
+    #input
+    if event.type == pygame.QUIT:
+        break
+
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        hasClicked = True
+        print("Click")
+        click += 1
+        
+    if event.type == pygame.MOUSEBUTTONUP:
+        hasClicked = False
+        
+    if event.type == pygame.MOUSEMOTION:
+        mousePos = event.pos
+        
+    #pattern
+    #pattern.append(random.randrange(0,4))
+    
+    for i in range(len(pattern)):
+        if pattern[i] == 0: #green
+            pygame.draw.arc(screen, (0,255,0), (200, 200, 400,400), pi / 2, pi, 100)
+            pygame.display.flip()
+            winsound.Beep(440, 500)
+            print("green")
+            
+        elif pattern[i] == 1:#yellow
+            pygame.draw.arc(screen, (255, 253, 140), (200, 200, 400, 400), pi, (3*pi/2),100)
+            pygame.display.flip()
+            winsound.Beep(640, 500)
+            print("yellow")
+            
+        elif pattern[i] == 2:#red
+            pygame.draw.arc(screen, (0, 0, 255), (200, 200, 400, 400), 3*pi/2, (2*pi),100)
+            pygame.display.flip()
+            winsound.Beep(540, 500)
+            print("blue")
+            
+        elif pattern[i] == 3:#blue
+            pygame.draw.arc(screen, (255, 0, 0), (200, 200, 400, 400), 2*pi, (pi/2),100)
+            pygame.display.flip()
+            winsound.Beep(340, 500)
+            print("red")
+        
+    #details
+    screen.fill((0, 0, 0))
+    pygame.draw.arc(screen, (46, 219, 46), (200, 200, 400, 400), pi / 2, pi, 100)#green
+    pygame.draw.arc(screen, (255, 243, 79), (200, 200, 400, 400), pi, (3*pi/2),100)#yellow
+    pygame.draw.arc(screen, (79, 52, 233), (200, 200, 400, 400), 3*pi/2, (2*pi),100)#red
+    pygame.draw.arc(screen, (233, 52, 61), (200, 200, 400, 400), 2*pi, (pi/2),100)#blue
+    font = pygame.font.Font(None, 74)
+    text = font.render(str(name), 1, (255,255,255))
+    screen.blit(text, (310,380))
+    text = font.render(str(click), 1, (255,255,255))
+    screen.blit(text, (10, 740))
+    pygame.display.flip()
+
+pygame.quit()
