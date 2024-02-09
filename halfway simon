@@ -1,0 +1,145 @@
+import pygame
+import random
+import math
+import winsound
+pygame.init()
+pygame.display.set_caption("Simon says clap")
+screen = pygame.display.set_mode((800, 800))
+
+#variables
+xpos = 0
+ypos = 0
+mousePos = (xpos, ypos)
+hasClicked = False
+pattern = []
+playerPattern = []
+playerTurn = True
+pi = 3.1415
+ded = False
+name = "SIMON"
+click = 0
+playerPattern = []
+
+#deff
+def collision(xpos,ypos):
+    if math.sqrt((xpos - 400)**2 + (ypos - 400)**2)>200:
+        print("outside of the ring")
+        return -1
+    
+    elif xpos < 400 and ypos < 400:
+        pygame.draw.arc(screen, (46, 219, 46), (200, 200, 400,400), pi / 2, pi, 100)
+        pygame.display.flip()
+        winsound.Beep(440, 500)
+        print("green")
+        return 0
+    elif xpos < 400 and ypos > 400:
+        pygame.draw.arc(screen, (247, 245, 101), (200, 200, 400, 400), pi, (3*pi/2),100)
+        pygame.display.flip()
+        winsound.Beep(640, 500)
+        print("yellow")
+        return 1
+    elif xpos > 400 and ypos < 400:
+        pygame.draw.arc(screen, (247, 111, 101), (200, 200, 400, 400), 2*pi, (pi/2),100)
+        pygame.display.flip()
+        winsound.Beep(340, 500)
+        print("red")
+        return 2
+    elif xpos > 400 and ypos > 400:
+        pygame.draw.arc(screen, (101, 138, 247), (200, 200, 400, 400), 3*pi/2, (2*pi),100)
+        pygame.display.flip()
+        winsound.Beep(540, 500)
+        print("blue")
+        return 3
+    
+    else:
+        print("Outside of ring")
+    
+
+
+#sapept2
+pygame.draw.arc(screen, (0,255,0), (200, 200, 400, 400), pi / 2, pi, 100)#green
+pygame.draw.arc(screen, (255,255,0), (200, 200, 400, 400), pi, (3*pi/2),100)#yellow
+pygame.draw.arc(screen, (0,0,255), (200, 200, 400, 400), 3*pi/2, (2*pi),100)#blue
+pygame.draw.arc(screen, (255,0,0), (200, 200, 400, 400), 2*pi, (pi/2),100)#red
+pygame.display.flip()
+
+#game loop
+while True:
+    event = pygame.event.wait()
+  
+    #input
+    if event.type == pygame.QUIT:
+        break
+
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        hasClicked = True
+        print("Click")
+        click += 1
+        
+    if event.type == pygame.MOUSEBUTTONUP:
+        hasClicked = False
+        
+    if event.type == pygame.MOUSEMOTION:
+        mousePos = event.pos
+        print("moving mouse")
+    
+    print("starting player turn")
+    if playerTurn == True:
+        if len(playerPattern) < len(pattern):
+            if hasClicked == True:
+                playerPattern.append(collision(mousePos[0], mousePos[1]))
+                hasClicked = False
+                
+        else:
+            playerTurn = False
+            pygame.time.wait(800)
+            
+    if playerTurn == False:
+        pattern.append(random.randrange(0,4))
+        
+        for i in range(len(pattern)):
+            if pattern[i] == 0: #green
+                pygame.draw.arc(screen, (0,255,0), (200, 200, 400,400), pi / 2, pi, 100)
+                pygame.display.flip()
+                winsound.Beep(440, 500)
+                print("green")
+                
+            elif pattern[i] == 1:#yellow
+                pygame.draw.arc(screen, (255, 253, 140), (200, 200, 400, 400), pi, (3*pi/2),100)
+                pygame.display.flip()
+                winsound.Beep(640, 500)
+                print("yellow")
+                
+            elif pattern[i] == 2:#red
+                pygame.draw.arc(screen, (0, 0, 255), (200, 200, 400, 400), 3*pi/2, (2*pi),100)
+                pygame.display.flip()
+                winsound.Beep(540, 500)
+                print("blue")
+                
+            elif pattern[i] == 3:#blue
+                pygame.draw.arc(screen, (255, 0, 0), (200, 200, 400, 400), 2*pi, (pi/2),100)
+                pygame.display.flip()
+                winsound.Beep(340, 500)
+                print("red")
+        
+ 
+        #details
+        screen.fill((0, 0, 0))
+        pygame.draw.arc(screen, (0,255,0), (200, 200, 400, 400), pi / 2, pi, 100)#green
+        pygame.draw.arc(screen, (255,255,0), (200, 200, 400, 400), pi, (3*pi/2),100)#yellow
+        pygame.draw.arc(screen, (0,0,255), (200, 200, 400, 400), 3*pi/2, (2*pi),100)#blue
+        pygame.draw.arc(screen, (255,0,0), (200, 200, 400, 400), 2*pi, (pi/2),100)#red
+        
+        #pygame.time.wait(800)
+        playerTurn = True
+        playerPattern.clear()
+
+
+
+font = pygame.font.Font(None, 74)
+text = font.render(str(name), 1, (255,255,255))
+screen.blit(text, (310,380))
+text = font.render(str(click), 1, (255,255,255))
+screen.blit(text, (10, 740))
+pygame.display.flip()
+pygame.quit()
